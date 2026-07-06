@@ -23,7 +23,10 @@
 <label>依頼先</label>
 <select id="mContractor"></select>
 <label>予定日</label>
-<input type="date" id="mDate">
+<div style="display:flex; gap:8px; align-items:center;">
+<input type="date" id="mDate" style="flex:1;">
+<button type="button" id="mDateClear" style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#f5f5f5; color:#333; white-space:nowrap;">✕ クリア</button>
+</div>
 <label>作業内容</label>
 <input type="text" id="mContent" placeholder="例：〇〇運搬、△△の代車手配など">
 <label>状況</label>
@@ -42,6 +45,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
-<script src="script.js?v=1"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>
