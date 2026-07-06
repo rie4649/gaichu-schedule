@@ -1,1 +1,32 @@
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "Hiragino Sans", sans-serif; margin: 0; background: #f0f4f3; color: #222; }
+header { background: #00695C; color: white; padding: 24px 16px; text-align: center; }
+header h1 { margin: 0; font-size: 26px; }
+header p { margin: 6px 0 0; font-size: 15px; opacity: .9; }
+main { max-width: 760px; margin: 0 auto; padding: 16px; }
+.menuBtn { width: 100%; padding: 16px; margin-bottom: 12px; border: none; border-radius: 12px; background: #00695C; color: white; font-size: 18px; font-weight: bold; }
+.menuBtn.secondary { background: #555; }
+.box { background: white; padding: 16px; border-radius: 14px; margin-top: 12px; }
+.box input { width: 100%; padding: 12px; font-size: 16px; border-radius: 10px; border: 1px solid #aaa; margin-bottom: 10px; box-sizing: border-box; }
+.row { display: grid; grid-template-columns: 1fr 50px 50px; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+.editBtn, .delBtn { border: none; border-radius: 8px; padding: 8px; color: white; }
+.editBtn { background: #1976d2; }
+.delBtn { background: #d32f2f; }
+
+.contractorBox { background: white; border-radius: 14px; padding: 14px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+.contractorTitle { font-size: 19px; font-weight: bold; color: #00695C; margin-bottom: 10px; }
+.emptyNote { color: #999; font-size: 14px; }
+.entryCard { background: #f7f9f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; position: relative; }
+.entryDate { font-weight: bold; font-size: 15px; }
+.entryContent { font-size: 15px; margin-top: 2px; }
+.entryNote { font-size: 13px; color: #666; margin-top: 4px; }
+.entryStatus { position: absolute; top: 10px; right: 12px; color: white; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; }
+
+.modalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 16px; z-index: 999; }
+.modalBox { background: white; width: 100%; max-width: 420px; border-radius: 16px; padding: 20px; }
+.modalBox label { font-size: 14px; font-weight: bold; display: block; margin: 10px 0 4px; }
+.modalBox input, .modalBox select, .modalBox textarea { width: 100%; padding: 10px; font-size: 15px; border-radius: 8px; border: 1px solid #aaa; box-sizing: border-box; }
+.saveBtn { width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 10px; background: #2e9d45; color: white; font-size: 16px; font-weight: bold; }
+.cancelBtn { width: 100%; margin-top: 8px; padding: 12px; border: none; border-radius: 10px; background: #777; color: white; font-size: 15px; }
+.deleteBtn { width: 100%; margin-top: 8px; padding: 12px; border: none; border-radius: 10px; background: #d32f2f; color: white; font-size: 15px; }
 
