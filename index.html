@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外注スケジュール</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header>
+<h1>🚚 外注スケジュール</h1>
+<p>依頼先ごとの予定一覧</p>
+</header>
+<main>
+<button class="menuBtn" id="addBtn">＋ 予定を追加する</button>
+<button class="menuBtn secondary" onclick="location.href='setting.html'">⚙ 依頼先の登録・編集</button>
+<div id="list"></div>
+</main>
+
+<div id="modalOverlay" class="modalOverlay">
+<div class="modalBox">
+<h2 id="modalTitle">予定の追加</h2>
+<label>依頼先</label>
+<select id="mContractor"></select>
+<label>予定日</label>
+<input type="date" id="mDate">
+<label>作業内容</label>
+<input type="text" id="mContent" placeholder="例：〇〇運搬、△△の代車手配など">
+<label>状況</label>
+<select id="mStatus">
+<option value="未依頼">未依頼</option>
+<option value="依頼済">依頼済</option>
+<option value="完了">完了</option>
+</select>
+<label>備考</label>
+<textarea id="mNote" rows="3" placeholder="任意"></textarea>
+<button class="saveBtn" id="mSaveBtn">保存する</button>
+<button class="cancelBtn" id="mCancelBtn">キャンセル</button>
+<button class="deleteBtn" id="mDeleteBtn" style="display:none;">この予定を削除する</button>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
+<script src="script.js?v=1"></script>
+</body>
+</html>
