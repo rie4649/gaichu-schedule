@@ -25,6 +25,7 @@ main { max-width: 760px; margin: 0 auto; padding: 16px; }
 .modalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 16px; z-index: 999; }
 .modalBox { background: white; width: 100%; max-width: 420px; border-radius: 16px; padding: 20px; }
 .modalBox label { font-size: 14px; font-weight: bold; display: block; margin: 10px 0 4px; }
+
 .modalBox input, .modalBox select, .modalBox textarea { width: 100%; padding: 10px; font-size: 15px; border-radius: 8px; border: 1px solid #aaa; box-sizing: border-box; }
 .saveBtn { width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 10px; background: #2e9d45; color: white; font-size: 16px; font-weight: bold; }
 .cancelBtn { width: 100%; margin-top: 8px; padding: 12px; border: none; border-radius: 10px; background: #777; color: white; font-size: 15px; }
