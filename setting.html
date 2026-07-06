@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外注スケジュール 設定</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header>
+<h1>⚙ 依頼先の登録・編集</h1>
+</header>
+<main>
+<button class="menuBtn secondary" onclick="location.href='index.html'">← 戻る</button>
+<div class="box">
+<input id="contractorInput" placeholder="依頼先（業者名）を入力">
+<button class="menuBtn" id="addContractorBtn">依頼先を追加</button>
+<div id="contractorList"></div>
+</div>
+</main>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+apiKey: "AIzaSyBziXuFLpPPOoBoL1rz-1xLd3PUhTxBaO0",
+authDomain: "gaichu-shedule.firebaseapp.com",
+databaseURL: "https://gaichu-shedule-default-rtdb.firebaseio.com",
+projectId: "gaichu-shedule",
+storageBucket: "gaichu-shedule.firebasestorage.app",
+messagingSenderId: "93773507733",
+appId: "1:93773507733:web:2fce361b242929a15b3f9c"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
+const defaultContractors = ["業者A", "業者B"];
+let contractors = [];
+
+function saveContractors() {
+db.ref("settings/contractors").set(contractors).then(render);
+}
+
+function render() {
+const box = document.getElementById("contractorList");
+box.innerHTML = "";
+contractors.forEach(function(name, i){
+const row = document.createElement("div");
+row.className = "row";
+
+const text = document.createElement("div");
+text.textContent = (i + 1) + ". " + name;
+
+const edit = document.createElement("button");
+edit.className = "editBtn";
+edit.textContent = "✏️";
+edit.onclick = function(){
+const n = prompt("依頼先名を編集", contractors[i]);
+if (!n || !n.trim()) return;
+contractors[i] = n.trim();
+saveContractors();
+};
+
+const del = document.createElement("button");
+del.className = "delBtn";
+del.textContent = "🗑";
+del.onclick = function(){
+if (!confirm(contractors[i] + " を削除しますか？")) return;
+contractors.splice(i, 1);
+saveContractors();
+};
+
+row.appendChild(text);
+row.appendChild(edit);
+row.appendChild(del);
+box.appendChild(row);
+});
+}
+
+document.getElementById("addContractorBtn").onclick = function(){
+const input = document.getElementById("contractorInput");
+const name = input.value.trim();
+if (!name) { alert("依頼先名を入力してください"); return; }
+contractors.push(name);
+input.value = "";
+saveContractors();
+};
+
+db.ref("settings/contractors").once("value").then(function(snap){
+contractors = snap.val() || defaultContractors;
+if (!snap.val()) { db.ref("settings/contractors").set(defaultContractors); }
+render();
+});
+</script>
+</body>
+</html>
