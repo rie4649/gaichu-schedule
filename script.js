@@ -36,15 +36,26 @@ if (status === "依頼済") return "#1976d2";
 return "#999";
 }
 
+function todayStr() {
+const d = new Date();
+const y = d.getFullYear();
+const m = String(d.getMonth() + 1).padStart(2, "0");
+const day = String(d.getDate()).padStart(2, "0");
+return y + "-" + m + "-" + day;
+}
+
 function renderHome() {
 const list = document.getElementById("list");
 if (!list) return;
 list.innerHTML = "";
 
+const today = todayStr();
+
 contractors.forEach(function(name) {
 const entries = Object.keys(schedules)
 .map(function(id){ return Object.assign({ id: id }, schedules[id]); })
 .filter(function(e){ return e.contractor === name; })
+.filter(function(e){ return !e.date || e.date >= today; })
 .sort(function(a, b){ return (a.date || "").localeCompare(b.date || ""); });
 
 const section = document.createElement("div");
@@ -156,6 +167,11 @@ if (cancelBtn) cancelBtn.onclick = closeModal;
 
 const deleteBtn = document.getElementById("mDeleteBtn");
 if (deleteBtn) deleteBtn.onclick = deleteEntry;
+
+const dateClearBtn = document.getElementById("mDateClear");
+if (dateClearBtn) dateClearBtn.onclick = function(){
+document.getElementById("mDate").value = "";
+};
 
 Promise.all([getContractors(), getSchedules()]).then(renderHome);
 });
