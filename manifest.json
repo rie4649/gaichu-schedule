@@ -1,1 +1,12 @@
+{
+  "name": "外注スケジュール",
+  "short_name": "外注スケジュール",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "icon_180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
 
