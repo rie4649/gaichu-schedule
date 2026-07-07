@@ -5,9 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>外注スケジュール</title>
 <link rel="stylesheet" href="style.css?v=1">
+<link rel="icon" type="image/png" href="icon_180.png?v=2">
 <link rel="apple-touch-icon" href="icon_180.png?v=2">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<style>
+#installBtn{
+display:none;position:fixed;top:14px;right:14px;z-index:9999;
+background:#2563eb;color:#fff;border:none;border-radius:999px;
+padding:10px 18px;font-size:14px;font-weight:bold;cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+#installHelp{
+display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+z-index:10000;align-items:center;justify-content:center;padding:20px;
+}
+#installHelp .box{background:#fff;border-radius:14px;padding:22px;max-width:340px;width:100%;text-align:left}
+#installHelp h3{margin:0 0 10px;color:#2563eb}
+#installHelp p{font-size:13px;color:#555;line-height:1.7}
+#installHelp button{
+margin-top:14px;width:100%;padding:10px;border:none;border-radius:8px;
+background:#ddd;font-weight:bold;cursor:pointer;font-size:14px;
+}
+</style>
 </head>
 <body>
+
+<button id="installBtn">📲 アプリを追加</button>
+<div id="installHelp">
+<div class="box">
+<h3>アプリとして追加する方法</h3>
+<p id="installHelpText"></p>
+<button id="closeInstallHelp">閉じる</button>
+</div>
+</div>
+
 <header>
 <h1>🚚 外注スケジュール</h1>
 <p>依頼先ごとの予定一覧</p>
@@ -47,5 +79,72 @@
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
 <script src="script.js?v=2"></script>
+
+<script>
+/* ===== アプリとして追加(PWAインストール) ===== */
+if("serviceWorker" in navigator){
+window.addEventListener("load", ()=>{
+navigator.serviceWorker.register("sw.js").catch(()=>{});
+});
+}
+
+let deferredInstallPrompt = null;
+const installBtn = document.getElementById("installBtn");
+let autoPromptTried = false;
+
+async function tryAutoPrompt(){
+if(autoPromptTried || !deferredInstallPrompt) return;
+autoPromptTried = true;
+try{
+deferredInstallPrompt.prompt();
+const choice = await deferredInstallPrompt.userChoice;
+if(choice.outcome === "accepted"){ installBtn.style.display = "none"; }
+deferredInstallPrompt = null;
+}catch(err){ console.error("auto install prompt failed", err); }
+}
+
+window.addEventListener("beforeinstallprompt", (e)=>{
+e.preventDefault();
+deferredInstallPrompt = e;
+installBtn.style.display = "inline-flex";
+tryAutoPrompt();
+});
+
+window.addEventListener("appinstalled", ()=>{
+installBtn.style.display = "none";
+deferredInstallPrompt = null;
+});
+
+function detectManualInstallText(){
+const ua = navigator.userAgent;
+const isMac = /Macintosh/.test(ua);
+const isWin = /Windows/.test(ua);
+const isSafari = /Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua);
+if(isSafari && isMac) return "Safariのメニューバーで「ファイル」→「Dockに追加」を選んでください。(Safari 17以降)";
+if(isSafari) return "共有ボタン(□に↑のアイコン)をタップし、「ホーム画面に追加」を選んでください。";
+if(isWin || isMac) return "アドレスバー右端の「インストール」アイコンをクリックしてください。表示されない場合は、ブラウザ右上のメニュー(⋮)から「アプリをインストール」を選んでください。";
+return "ブラウザのメニューから「ホーム画面に追加」または「インストール」を選んでください。";
+}
+
+installBtn.addEventListener("click", async ()=>{
+if(deferredInstallPrompt){
+deferredInstallPrompt.prompt();
+const choice = await deferredInstallPrompt.userChoice;
+deferredInstallPrompt = null;
+if(choice.outcome === "accepted") installBtn.style.display = "none";
+return;
+}
+document.getElementById("installHelpText").textContent = detectManualInstallText();
+document.getElementById("installHelp").style.display = "flex";
+});
+
+document.getElementById("closeInstallHelp").onclick = ()=>{
+document.getElementById("installHelp").style.display = "none";
+};
+
+if(!("onbeforeinstallprompt" in window)){
+installBtn.style.display = "inline-flex";
+}
+</script>
 </body>
 </html>
