@@ -30,6 +30,20 @@ schedules = snap.val() || {};
 });
 }
 
+function cleanupPastSchedules() {
+const today = todayStr();
+const idsToDelete = Object.keys(schedules).filter(function(id){
+const e = schedules[id];
+return e.date && e.date < today;
+});
+if (idsToDelete.length === 0) return Promise.resolve();
+const removals = idsToDelete.map(function(id){
+delete schedules[id];
+return db.ref("schedules/" + id).remove();
+});
+return Promise.all(removals);
+}
+
 function statusColor(status) {
 if (status === "完了") return "#2e9d45";
 if (status === "依頼済") return "#1976d2";
@@ -173,5 +187,7 @@ if (dateClearBtn) dateClearBtn.onclick = function(){
 document.getElementById("mDate").value = "";
 };
 
-Promise.all([getContractors(), getSchedules()]).then(renderHome);
+Promise.all([getContractors(), getSchedules()]).then(function(){
+return cleanupPastSchedules();
+}).then(renderHome);
 });
