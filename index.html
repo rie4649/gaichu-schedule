@@ -27,6 +27,34 @@ z-index:10000;align-items:center;justify-content:center;padding:20px;
 margin-top:14px;width:100%;padding:10px;border:none;border-radius:8px;
 background:#ddd;font-weight:bold;cursor:pointer;font-size:14px;
 }
+#pastOverlay{
+display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+z-index:9998;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;
+}
+#pastOverlay .pastBox{
+background:#fff;border-radius:14px;padding:20px;max-width:480px;width:100%;
+margin:20px auto;
+}
+#pastOverlay h2{margin:0 0 14px;color:#2563eb;font-size:18px;}
+.pastMonthTitle{
+font-weight:bold;font-size:15px;color:#333;
+border-bottom:2px solid #2563eb;padding-bottom:4px;margin:18px 0 8px;
+}
+.pastCard{
+border:1px solid #e0e0e0;border-radius:10px;padding:10px 12px;margin-bottom:8px;
+background:#fafafa;font-size:13px;line-height:1.6;
+}
+.pastCard .pd{font-weight:bold;color:#2563eb;}
+.pastCard .pc{color:#333;}
+.pastCard .pn{color:#777;font-size:12px;}
+.pastCard .ps{
+display:inline-block;color:#fff;border-radius:6px;padding:1px 8px;
+font-size:11px;margin-left:6px;vertical-align:middle;
+}
+#closePastBtn{
+margin-top:14px;width:100%;padding:12px;border:none;border-radius:8px;
+background:#ddd;font-weight:bold;cursor:pointer;font-size:14px;
+}
 </style>
 </head>
 <body>
@@ -46,9 +74,18 @@ background:#ddd;font-weight:bold;cursor:pointer;font-size:14px;
 </header>
 <main>
 <button class="menuBtn" id="addBtn">＋ 予定を追加する</button>
+<button class="menuBtn secondary" id="pastBtn">📅 過去の記録を見る</button>
 <button class="menuBtn secondary" onclick="location.href='setting.html'">⚙ 依頼先の登録・編集</button>
 <div id="list"></div>
 </main>
+
+<div id="pastOverlay">
+<div class="pastBox">
+<h2>📅 過去の記録</h2>
+<div id="pastList"></div>
+<button id="closePastBtn">閉じる</button>
+</div>
+</div>
 
 <div id="modalOverlay" class="modalOverlay">
 <div class="modalBox">
@@ -78,7 +115,7 @@ background:#ddd;font-weight:bold;cursor:pointer;font-size:14px;
 
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-database-compat.js"></script>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 
 <script>
 /* ===== アプリとして追加(PWAインストール) ===== */
