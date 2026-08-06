@@ -30,20 +30,6 @@ schedules = snap.val() || {};
 });
 }
 
-function cleanupPastSchedules() {
-const today = todayStr();
-const idsToDelete = Object.keys(schedules).filter(function(id){
-const e = schedules[id];
-return e.date && e.date < today;
-});
-if (idsToDelete.length === 0) return Promise.resolve();
-const removals = idsToDelete.map(function(id){
-delete schedules[id];
-return db.ref("schedules/" + id).remove();
-});
-return Promise.all(removals);
-}
-
 function statusColor(status) {
 if (status === "完了") return "#2e9d45";
 if (status === "依頼済") return "#1976d2";
@@ -103,6 +89,54 @@ list.appendChild(section);
 });
 }
 
+/* ===== 過去の記録（削除せず表示のみ） ===== */
+function renderPast() {
+const pastList = document.getElementById("pastList");
+pastList.innerHTML = "";
+
+const today = todayStr();
+
+const pastEntries = Object.keys(schedules)
+.map(function(id){ return Object.assign({ id: id }, schedules[id]); })
+.filter(function(e){ return e.date && e.date < today; })
+.sort(function(a, b){ return b.date.localeCompare(a.date); });
+
+if (pastEntries.length === 0) {
+pastList.innerHTML = "<div style='color:#888;font-size:13px;padding:10px 0;'>過去の記録はありません</div>";
+return;
+}
+
+let currentMonth = "";
+pastEntries.forEach(function(e){
+const month = e.date.slice(0, 7);
+if (month !== currentMonth) {
+currentMonth = month;
+const parts = month.split("-");
+const mt = document.createElement("div");
+mt.className = "pastMonthTitle";
+mt.textContent = parts[0] + "年" + Number(parts[1]) + "月";
+pastList.appendChild(mt);
+}
+const card = document.createElement("div");
+card.className = "pastCard";
+card.innerHTML =
+"<div class='pd'>" + e.date +
+"<span class='ps' style='background:" + statusColor(e.status) + "'>" + (e.status || "") + "</span></div>" +
+"<div class='pc'>🏢 " + (e.contractor || "") + "／" + (e.content || "") + "</div>" +
+(e.note ? "<div class='pn'>📝 " + e.note + "</div>" : "");
+pastList.appendChild(card);
+});
+}
+
+function openPast() {
+getSchedules().then(function(){
+renderPast();
+document.getElementById("pastOverlay").style.display = "flex";
+}).catch(function(err){
+alert("データの読み込みに失敗しました：" + err.message);
+});
+}
+
 function fillContractorSelect() {
 const select = document.getElementById("mContractor");
 select.innerHTML = "";
@@ -157,7 +191,9 @@ const ref = editingId ? db.ref("schedules/" + editingId) : db.ref("schedules").p
 ref.set(data).then(function(){
 closeModal();
 return getSchedules();
-}).then(renderHome);
+}).then(renderHome).catch(function(err){
+alert("保存に失敗しました：" + err.message + "\n\nFirebaseのルール期限切れの可能性があります。");
+});
 }
 
 function deleteEntry() {
@@ -166,12 +202,22 @@ if (!confirm("この予定を削除しますか？")) return;
 db.ref("schedules/" + editingId).remove().then(function(){
 closeModal();
 return getSchedules();
-}).then(renderHome);
+}).then(renderHome).catch(function(err){
+alert("削除に失敗しました：" + err.message);
+});
 }
 
 document.addEventListener("DOMContentLoaded", function(){
 const addBtn = document.getElementById("addBtn");
 if (addBtn) addBtn.onclick = openAddModal;
+
+const pastBtn = document.getElementById("pastBtn");
+if (pastBtn) pastBtn.onclick = openPast;
+
+const closePastBtn = document.getElementById("closePastBtn");
+if (closePastBtn) closePastBtn.onclick = function(){
+document.getElementById("pastOverlay").style.display = "none";
+};
 
 const saveBtn = document.getElementById("mSaveBtn");
 if (saveBtn) saveBtn.onclick = saveEntry;
@@ -187,7 +233,7 @@ if (dateClearBtn) dateClearBtn.onclick = function(){
 document.getElementById("mDate").value = "";
 };
 
-Promise.all([getContractors(), getSchedules()]).then(function(){
-return cleanupPastSchedules();
-}).then(renderHome);
+Promise.all([getContractors(), getSchedules()]).then(renderHome).catch(function(err){
+alert("データの読み込みに失敗しました：" + err.message + "\n\nFirebaseコンソールでRealtime Databaseのルールを確認してください。");
+});
 });
