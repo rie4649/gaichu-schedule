@@ -77,9 +77,8 @@ const card = document.createElement("div");
 card.className = "entryCard";
 card.innerHTML =
 "<div class='entryDate'>" + (e.date || "日付未定") + "</div>" +
-"<div class='entryContent'>" + e.content + "</div>" +
-(e.note ? "<div class='entryNote'>📝 " + e.note + "</div>" : "") +
-"<div class='entryStatus' style='background:" + statusColor(e.status) + "'>" + e.status + "</div>";
+(e.content ? "<div class='entryContent'>" + e.content + "</div>" : "") +
+(e.note ? "<div class='entryNote'>📝 " + e.note + "</div>" : "");
 card.onclick = function(){ openEditModal(e); };
 section.appendChild(card);
 });
@@ -121,8 +120,8 @@ const card = document.createElement("div");
 card.className = "pastCard";
 card.innerHTML =
 "<div class='pd'>" + e.date +
-"<span class='ps' style='background:" + statusColor(e.status) + "'>" + (e.status || "") + "</span></div>" +
-"<div class='pc'>🏢 " + (e.contractor || "") + "／" + (e.content || "") + "</div>" +
+"</div>" +
+"<div class='pc'>🏢 " + (e.contractor || "") + (e.content ? "／" + e.content : "") + "</div>" +
 (e.note ? "<div class='pn'>📝 " + e.note + "</div>" : "");
 pastList.appendChild(card);
 });
@@ -152,8 +151,6 @@ editingId = null;
 document.getElementById("modalTitle").textContent = "予定の追加";
 fillContractorSelect();
 document.getElementById("mDate").value = "";
-document.getElementById("mContent").value = "";
-document.getElementById("mStatus").value = "未依頼";
 document.getElementById("mNote").value = "";
 document.getElementById("mDeleteBtn").style.display = "none";
 document.getElementById("modalOverlay").style.display = "flex";
@@ -165,8 +162,6 @@ document.getElementById("modalTitle").textContent = "予定の編集";
 fillContractorSelect();
 document.getElementById("mContractor").value = e.contractor;
 document.getElementById("mDate").value = e.date || "";
-document.getElementById("mContent").value = e.content || "";
-document.getElementById("mStatus").value = e.status || "未依頼";
 document.getElementById("mNote").value = e.note || "";
 document.getElementById("mDeleteBtn").style.display = "block";
 document.getElementById("modalOverlay").style.display = "flex";
@@ -180,12 +175,8 @@ function saveEntry() {
 const data = {
 contractor: document.getElementById("mContractor").value,
 date: document.getElementById("mDate").value,
-content: document.getElementById("mContent").value.trim(),
-status: document.getElementById("mStatus").value,
 note: document.getElementById("mNote").value.trim()
 };
-
-if (!data.content) { alert("作業内容を入力してください"); return; }
 
 const ref = editingId ? db.ref("schedules/" + editingId) : db.ref("schedules").push();
 ref.set(data).then(function(){
